@@ -12,6 +12,9 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "PromptSaver",
+            resources: [
+                .copy("Resources/icon.png")
+            ],
             swiftSettings: [
                 .swiftLanguageMode(.v6)
             ]

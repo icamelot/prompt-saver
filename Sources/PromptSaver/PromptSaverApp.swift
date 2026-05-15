@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 @main
 struct PromptSaverApp: App {
@@ -10,6 +11,12 @@ struct PromptSaverApp: App {
             ContentView()
                 .environmentObject(store)
                 .environmentObject(localeManager)
+                .onAppear {
+                    if let path = Bundle.module.path(forResource: "icon", ofType: "png"),
+                       let image = NSImage(contentsOfFile: path) {
+                        NSApp.applicationIconImage = image
+                    }
+                }
         }
         .windowResizability(.contentMinSize)
         .defaultSize(width: 900, height: 600)
