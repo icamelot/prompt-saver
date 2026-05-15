@@ -2,15 +2,19 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var store: DataStore
+    @EnvironmentObject private var localeManager: LocaleManager
     @State private var sidebarSelection: SidebarSelection = .all
     @State private var selectedPrompt: Prompt?
     @State private var searchText: String = ""
     @State private var isShowingNewPrompt: Bool = false
 
+    private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
+
     var body: some View {
         NavigationSplitView {
             SidebarView(selection: $sidebarSelection)
                 .environmentObject(store)
+                .environmentObject(localeManager)
         } content: {
             PromptListView(
                 selectedPrompt: $selectedPrompt,
@@ -18,23 +22,25 @@ struct ContentView: View {
                 searchText: searchText
             )
             .environmentObject(store)
-            .navigationTitle("Prompts")
+            .environmentObject(localeManager)
+            .navigationTitle(s.prompts)
         } detail: {
             if let prompt = selectedPrompt {
                 PromptDetailView(prompt: prompt)
                     .environmentObject(store)
+                    .environmentObject(localeManager)
             } else {
                 ContentUnavailableView(
-                    "No Prompt Selected",
+                    s.noPromptSelected,
                     systemImage: "doc.text",
-                    description: Text("Select a prompt from the list or create a new one.")
+                    description: Text(s.selectPromptHint)
                 )
             }
         }
         .searchable(text: $searchText, placement: .sidebar)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("New Prompt", systemImage: "plus") {
+                Button(s.newPrompt, systemImage: "plus") {
                     isShowingNewPrompt = true
                 }
                 .keyboardShortcut("n", modifiers: .command)
@@ -42,7 +48,7 @@ struct ContentView: View {
 
             ToolbarItem(placement: .automatic) {
                 if selectedPrompt != nil {
-                    Button("Delete", systemImage: "trash", role: .destructive) {
+                    Button(s.delete, systemImage: "trash", role: .destructive) {
                         deleteSelectedPrompt()
                     }
                     .keyboardShortcut(.delete, modifiers: .command)
@@ -52,6 +58,7 @@ struct ContentView: View {
         .sheet(isPresented: $isShowingNewPrompt) {
             PromptEditView(editingPrompt: nil)
                 .environmentObject(store)
+                .environmentObject(localeManager)
         }
     }
 

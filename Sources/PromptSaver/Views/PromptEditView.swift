@@ -3,6 +3,7 @@ import SwiftUI
 struct PromptEditView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var store: DataStore
+    @EnvironmentObject private var localeManager: LocaleManager
 
     let editingPrompt: Prompt?
 
@@ -10,6 +11,8 @@ struct PromptEditView: View {
     @State private var content: String
     @State private var selectedTagIds: Set<UUID>
     @State private var newTagName: String = ""
+
+    private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
     private var availableTags: [Tag] {
         store.tags
@@ -36,8 +39,8 @@ struct PromptEditView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Prompt") {
-                    TextField("Title", text: $title)
+                Section(s.promptSection) {
+                    TextField(s.titlePlaceholder, text: $title)
                         .font(.title2)
 
                     TextEditor(text: $content)
@@ -45,7 +48,7 @@ struct PromptEditView: View {
                         .frame(minHeight: 250)
                 }
 
-                Section("Tags") {
+                Section(s.tagsSection) {
                     if !selectedTags.isEmpty {
                         FlowLayout(spacing: 6) {
                             ForEach(selectedTags.sorted(by: { $0.name < $1.name })) { tag in
@@ -58,8 +61,8 @@ struct PromptEditView: View {
                     }
 
                     if !availableTags.isEmpty {
-                        Picker("Add Tag", selection: $newTagName) {
-                            Text("Select a tag...").tag("")
+                        Picker(s.addTag, selection: $newTagName) {
+                            Text(s.selectTag).tag("")
                             ForEach(availableTags) { tag in
                                 Text(tag.name).tag(tag.name)
                             }
@@ -74,21 +77,21 @@ struct PromptEditView: View {
                     }
 
                     HStack {
-                        TextField("New tag name", text: $newTagName)
+                        TextField(s.newTagName, text: $newTagName)
                             .onSubmit { addNewTag() }
-                        Button("Add") { addNewTag() }
+                        Button(s.add) { addNewTag() }
                             .disabled(newTagName.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle(editingPrompt == nil ? "New Prompt" : "Edit Prompt")
+            .navigationTitle(editingPrompt == nil ? s.newPrompt : s.editPrompt)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button(s.cancel) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
+                    Button(s.save) { save() }
                         .disabled(isSaveDisabled)
                 }
             }

@@ -2,9 +2,12 @@ import SwiftUI
 
 struct PromptListView: View {
     @EnvironmentObject private var store: DataStore
+    @EnvironmentObject private var localeManager: LocaleManager
     @Binding var selectedPrompt: Prompt?
     let filter: (Prompt) -> Bool
     let searchText: String
+
+    private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
     private var filteredPrompts: [Prompt] {
         store.prompts
@@ -21,26 +24,26 @@ struct PromptListView: View {
         List(selection: $selectedPrompt) {
             if filteredPrompts.isEmpty && !store.prompts.isEmpty {
                 ContentUnavailableView(
-                    "No Matches",
+                    s.noMatches,
                     systemImage: "doc.text.magnifyingglass",
-                    description: Text("No prompts match your search or filter.")
+                    description: Text(s.noMatchesHint)
                 )
             } else if store.prompts.isEmpty {
                 ContentUnavailableView(
-                    "No Prompts Yet",
+                    s.noPromptsYet,
                     systemImage: "tray",
-                    description: Text("Press Cmd+N to create your first prompt.")
+                    description: Text(s.createFirstHint)
                 )
             } else {
                 ForEach(filteredPrompts) { prompt in
                     PromptRowView(prompt: prompt, tags: store.tags(for: prompt))
                         .tag(prompt)
                         .contextMenu {
-                            Button("Copy Content", systemImage: "doc.on.doc") {
+                            Button(s.copyContent, systemImage: "doc.on.doc") {
                                 copyToClipboard(prompt.content)
                             }
                             Divider()
-                            Button("Delete", systemImage: "trash", role: .destructive) {
+                            Button(s.delete, systemImage: "trash", role: .destructive) {
                                 store.deletePrompt(prompt)
                                 if selectedPrompt == prompt { selectedPrompt = nil }
                             }

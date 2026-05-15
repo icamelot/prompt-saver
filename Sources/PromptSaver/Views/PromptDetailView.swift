@@ -2,9 +2,12 @@ import SwiftUI
 
 struct PromptDetailView: View {
     @EnvironmentObject private var store: DataStore
+    @EnvironmentObject private var localeManager: LocaleManager
     let prompt: Prompt
     @State private var isEditing = false
     @State private var showCopiedFeedback = false
+
+    private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
     private var promptTags: [Tag] {
         store.tags(for: prompt)
@@ -45,13 +48,13 @@ struct PromptDetailView: View {
                     copyToClipboard()
                 } label: {
                     Label(
-                        showCopiedFeedback ? "Copied" : "Copy",
+                        showCopiedFeedback ? s.copied : s.copy,
                         systemImage: showCopiedFeedback ? "checkmark" : "doc.on.doc"
                     )
                 }
                 .disabled(showCopiedFeedback)
 
-                Button("Edit", systemImage: "pencil") {
+                Button(s.edit, systemImage: "pencil") {
                     isEditing = true
                 }
             }
@@ -59,6 +62,7 @@ struct PromptDetailView: View {
         .sheet(isPresented: $isEditing) {
             PromptEditView(editingPrompt: prompt)
                 .environmentObject(store)
+                .environmentObject(localeManager)
         }
         .navigationTitle(prompt.title)
     }
