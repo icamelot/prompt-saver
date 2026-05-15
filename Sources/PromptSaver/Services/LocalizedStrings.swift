@@ -28,6 +28,20 @@ struct LocalizedStrings {
         }
     }
 
+    var newTag: String {
+        switch language {
+        case .english: return "New Tag"
+        case .chinese: return "新建标签"
+        }
+    }
+
+    var newTagPrompt: String {
+        switch language {
+        case .english: return "Enter tag name:"
+        case .chinese: return "输入标签名称："
+        }
+    }
+
     // MARK: - Content / List
 
     var noPromptSelected: String {

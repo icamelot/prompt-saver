@@ -5,6 +5,9 @@ struct SidebarView: View {
     @EnvironmentObject private var localeManager: LocaleManager
     @Binding var selection: SidebarSelection
 
+    @State private var isShowingNewTagAlert = false
+    @State private var newTagNameInput = ""
+
     private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
     var body: some View {
@@ -18,14 +21,37 @@ struct SidebarView: View {
                         .badge(store.tagCount(for: tag))
                         .tag(SidebarSelection.tag(tag))
                         .contextMenu {
+                            Button(s.newTag) {
+                                newTagNameInput = ""
+                                isShowingNewTagAlert = true
+                            }
+                            Divider()
                             Button(s.deleteTag, role: .destructive) {
                                 deleteTag(tag)
                             }
                         }
                 }
             }
+            .contextMenu {
+                Button(s.newTag) {
+                    newTagNameInput = ""
+                    isShowingNewTagAlert = true
+                }
+            }
         }
         .listStyle(.sidebar)
+        .alert(s.newTag, isPresented: $isShowingNewTagAlert) {
+            TextField(s.newTagPrompt, text: $newTagNameInput)
+            Button(s.cancel, role: .cancel) {}
+            Button(s.add) { addNewTag() }
+        }
+    }
+
+    private func addNewTag() {
+        let name = newTagNameInput.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        _ = store.addTag(name: name)
+        newTagNameInput = ""
     }
 
     private func deleteTag(_ tag: Tag) {
