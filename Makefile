@@ -22,5 +22,6 @@ bundle: release
 	@mkdir -p "build/$(APP_NAME).app/Contents/Resources"
 	@cp ".build/release/$(APP_NAME)" "build/$(APP_NAME).app/Contents/MacOS/"
 	@cp "Resources/Info.plist" "build/$(APP_NAME).app/Contents/"
+	@cp "Resources/AppIcon.icns" "build/$(APP_NAME).app/Contents/Resources/"
 	@echo "Created build/$(APP_NAME).app"
 	@echo "Run: open build/$(APP_NAME).app"
