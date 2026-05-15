@@ -1,0 +1,22 @@
+# SwiftPM
+.build/
+.build-x86_64/
+
+# macOS
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Xcode (if ever used)
+*.xcuserdata
+*.xcworkspace
+DerivedData/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/
+
+# Build artifacts
+build/
+
+# Temp files
+tmp/
