@@ -15,7 +15,7 @@ struct SidebarView: View {
             Label(s.allPrompts, systemImage: "tray.full")
                 .tag(SidebarSelection.all)
 
-            Section(s.tags) {
+            Section {
                 ForEach(store.tags.sorted(by: { $0.name < $1.name })) { tag in
                     Label(tag.name, systemImage: "tag")
                         .badge(store.tagCount(for: tag))
@@ -31,11 +31,19 @@ struct SidebarView: View {
                             }
                         }
                 }
-            }
-            .contextMenu {
-                Button(s.newTag) {
-                    newTagNameInput = ""
-                    isShowingNewTagAlert = true
+            } header: {
+                HStack {
+                    Text(s.tags)
+                    Spacer()
+                    Button {
+                        newTagNameInput = ""
+                        isShowingNewTagAlert = true
+                    } label: {
+                        Image(systemName: "plus")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.borderless)
+                    .help(s.newTag)
                 }
             }
         }
