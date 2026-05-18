@@ -36,7 +36,7 @@ struct PromptListView: View {
                 )
             } else {
                 ForEach(filteredPrompts) { prompt in
-                    PromptRowView(prompt: prompt, tags: store.tags(for: prompt))
+                    PromptRowView(prompt: prompt, groups: store.groups(for: prompt))
                         .tag(prompt)
                         .contextMenu {
                             Button(s.copyContent, systemImage: "doc.on.doc") {
@@ -71,7 +71,7 @@ struct PromptListView: View {
 
 private struct PromptRowView: View {
     let prompt: Prompt
-    let tags: [Tag]
+    let groups: [Group]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -84,10 +84,10 @@ private struct PromptRowView: View {
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
 
-            if !tags.isEmpty {
+            if !groups.isEmpty {
                 HStack(spacing: 4) {
-                    ForEach(tags) { tag in
-                        Text(tag.name)
+                    ForEach(groups) { group in
+                        Text(group.name)
                             .font(.caption2)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)

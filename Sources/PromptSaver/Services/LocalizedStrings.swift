@@ -14,31 +14,52 @@ struct LocalizedStrings {
         }
     }
 
-    var tags: String {
+    var sessions: String {
         switch language {
-        case .english: return "Tags"
-        case .chinese: return "标签"
+        case .english: return "Sessions"
+        case .chinese: return "会话"
         }
     }
 
-    var deleteTag: String {
+    var groups: String {
         switch language {
-        case .english: return "Delete Tag"
-        case .chinese: return "删除标签"
+        case .english: return "Groups"
+        case .chinese: return "分组"
         }
     }
 
-    var newTag: String {
+    var newSession: String {
         switch language {
-        case .english: return "New Tag"
-        case .chinese: return "新建标签"
+        case .english: return "New Session"
+        case .chinese: return "新建会话"
         }
     }
 
-    var newTagPrompt: String {
+    var newGroup: String {
         switch language {
-        case .english: return "Enter tag name:"
-        case .chinese: return "输入标签名称："
+        case .english: return "New Group"
+        case .chinese: return "新建分组"
+        }
+    }
+
+    var deleteGroup: String {
+        switch language {
+        case .english: return "Delete Group"
+        case .chinese: return "删除分组"
+        }
+    }
+
+    var duplicateGroup: String {
+        switch language {
+        case .english: return "Duplicate Group"
+        case .chinese: return "复制分组"
+        }
+    }
+
+    var deleteSession: String {
+        switch language {
+        case .english: return "Delete Session"
+        case .chinese: return "删除会话"
         }
     }
 
@@ -160,31 +181,31 @@ struct LocalizedStrings {
         }
     }
 
-    var tagsSection: String {
+    var groupsSection: String {
         switch language {
-        case .english: return "Tags"
-        case .chinese: return "标签"
+        case .english: return "Groups"
+        case .chinese: return "分组"
         }
     }
 
-    var addTag: String {
+    var addGroup: String {
         switch language {
-        case .english: return "Add Tag"
-        case .chinese: return "添加标签"
+        case .english: return "Add Group"
+        case .chinese: return "添加分组"
         }
     }
 
-    var selectTag: String {
+    var selectGroup: String {
         switch language {
-        case .english: return "Select a tag..."
-        case .chinese: return "选择标签..."
+        case .english: return "Select a group..."
+        case .chinese: return "选择分组..."
         }
     }
 
-    var newTagName: String {
+    var newGroupName: String {
         switch language {
-        case .english: return "New tag name"
-        case .chinese: return "新标签名称"
+        case .english: return "New group name"
+        case .chinese: return "新分组名称"
         }
     }
 
@@ -222,13 +243,6 @@ struct LocalizedStrings {
         switch language {
         case .english: return "Language"
         case .chinese: return "语言"
-        }
-    }
-
-    var searchPlaceholder: String {
-        switch language {
-        case .english: return "Search prompts..."
-        case .chinese: return "搜索提示词..."
         }
     }
 }

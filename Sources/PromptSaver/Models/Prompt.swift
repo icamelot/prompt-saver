@@ -6,14 +6,16 @@ struct Prompt: Codable, Identifiable, Hashable {
     var content: String
     var createdAt: Date
     var updatedAt: Date
-    var tagIds: Set<UUID>
+    var groupIds: Set<UUID>
+    var sessionId: UUID?
 
-    init(id: UUID = UUID(), title: String, content: String, tagIds: Set<UUID> = []) {
+    init(id: UUID = UUID(), title: String, content: String, groupIds: Set<UUID> = [], sessionId: UUID? = nil) {
         self.id = id
         self.title = title
         self.content = content
         self.createdAt = Date()
         self.updatedAt = Date()
-        self.tagIds = tagIds
+        self.groupIds = groupIds
+        self.sessionId = sessionId
     }
 }

@@ -9,8 +9,8 @@ struct PromptDetailView: View {
 
     private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
-    private var promptTags: [Tag] {
-        store.tags(for: prompt)
+    private var promptGroups: [Group] {
+        store.groups(for: prompt)
     }
 
     var body: some View {
@@ -20,10 +20,10 @@ struct PromptDetailView: View {
                     .font(.largeTitle)
                     .bold()
 
-                if !promptTags.isEmpty {
+                if !promptGroups.isEmpty {
                     HStack(spacing: 6) {
-                        ForEach(promptTags) { tag in
-                            Text(tag.name)
+                        ForEach(promptGroups) { group in
+                            Text(group.name)
                                 .font(.caption)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)

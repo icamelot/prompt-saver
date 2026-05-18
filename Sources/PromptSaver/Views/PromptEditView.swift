@@ -9,19 +9,20 @@ struct PromptEditView: View {
 
     @State private var title: String
     @State private var content: String
-    @State private var selectedTagIds: Set<UUID>
-    @State private var newTagName: String = ""
+    @State private var selectedGroupIds: Set<UUID>
+    @State private var selectedSessionId: UUID?
+    @State private var newGroupNameInput: String = ""
 
     private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
-    private var availableTags: [Tag] {
-        store.tags
-            .filter { !selectedTagIds.contains($0.id) }
+    private var availableGroups: [Group] {
+        store.groups
+            .filter { !selectedGroupIds.contains($0.id) }
             .sorted { $0.name < $1.name }
     }
 
-    private var selectedTags: [Tag] {
-        store.tags.filter { selectedTagIds.contains($0.id) }
+    private var selectedGroups: [Group] {
+        store.groups.filter { selectedGroupIds.contains($0.id) }
     }
 
     private var isSaveDisabled: Bool {
@@ -33,7 +34,8 @@ struct PromptEditView: View {
         self.editingPrompt = editingPrompt
         _title = State(initialValue: editingPrompt?.title ?? "")
         _content = State(initialValue: editingPrompt?.content ?? "")
-        _selectedTagIds = State(initialValue: editingPrompt?.tagIds ?? [])
+        _selectedGroupIds = State(initialValue: editingPrompt?.groupIds ?? [])
+        _selectedSessionId = State(initialValue: editingPrompt?.sessionId)
     }
 
     var body: some View {
@@ -48,39 +50,48 @@ struct PromptEditView: View {
                         .frame(minHeight: 250)
                 }
 
-                Section(s.tagsSection) {
-                    if !selectedTags.isEmpty {
+                Section(s.sessions) {
+                    Picker(s.sessions, selection: $selectedSessionId) {
+                        Text("None").tag(nil as UUID?)
+                        ForEach(store.sessions) { session in
+                            Text(session.name).tag(session.id as UUID?)
+                        }
+                    }
+                }
+
+                Section(s.groupsSection) {
+                    if !selectedGroups.isEmpty {
                         FlowLayout(spacing: 6) {
-                            ForEach(selectedTags.sorted(by: { $0.name < $1.name })) { tag in
-                                TagPill(name: tag.name) {
-                                    selectedTagIds.remove(tag.id)
+                            ForEach(selectedGroups.sorted(by: { $0.name < $1.name })) { group in
+                                TagPill(name: group.name) {
+                                    selectedGroupIds.remove(group.id)
                                 }
                             }
                         }
                         .padding(.vertical, 4)
                     }
 
-                    if !availableTags.isEmpty {
-                        Picker(s.addTag, selection: $newTagName) {
-                            Text(s.selectTag).tag("")
-                            ForEach(availableTags) { tag in
-                                Text(tag.name).tag(tag.name)
+                    if !availableGroups.isEmpty {
+                        Picker(s.addGroup, selection: $newGroupNameInput) {
+                            Text(s.selectGroup).tag("")
+                            ForEach(availableGroups) { group in
+                                Text(group.name).tag(group.name)
                             }
                         }
-                        .onChange(of: newTagName) { _, newValue in
+                        .onChange(of: newGroupNameInput) { _, newValue in
                             if !newValue.isEmpty {
-                                let tag = store.addTag(name: newValue)
-                                selectedTagIds.insert(tag.id)
-                                newTagName = ""
+                                let group = store.addGroup(name: newValue)
+                                selectedGroupIds.insert(group.id)
+                                newGroupNameInput = ""
                             }
                         }
                     }
 
                     HStack {
-                        TextField(s.newTagName, text: $newTagName)
-                            .onSubmit { addNewTag() }
-                        Button(s.add) { addNewTag() }
-                            .disabled(newTagName.trimmingCharacters(in: .whitespaces).isEmpty)
+                        TextField(s.newGroupName, text: $newGroupNameInput)
+                            .onSubmit { addNewGroup() }
+                        Button(s.add) { addNewGroup() }
+                            .disabled(newGroupNameInput.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
                 }
             }
@@ -99,12 +110,12 @@ struct PromptEditView: View {
         .frame(minWidth: 500, minHeight: 450)
     }
 
-    private func addNewTag() {
-        let name = newTagName.trimmingCharacters(in: .whitespaces)
+    private func addNewGroup() {
+        let name = newGroupNameInput.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
-        let tag = store.addTag(name: name)
-        selectedTagIds.insert(tag.id)
-        newTagName = ""
+        let group = store.addGroup(name: name)
+        selectedGroupIds.insert(group.id)
+        newGroupNameInput = ""
     }
 
     private func save() {
@@ -113,9 +124,11 @@ struct PromptEditView: View {
         guard !trimmedTitle.isEmpty, !trimmedContent.isEmpty else { return }
 
         if let prompt = editingPrompt {
-            store.updatePrompt(prompt, title: trimmedTitle, content: trimmedContent, tagIds: selectedTagIds)
+            store.updatePrompt(prompt, title: trimmedTitle, content: trimmedContent,
+                               groupIds: selectedGroupIds, sessionId: selectedSessionId)
         } else {
-            store.addPrompt(title: trimmedTitle, content: trimmedContent, tagIds: selectedTagIds)
+            store.addPrompt(title: trimmedTitle, content: trimmedContent,
+                            groupIds: selectedGroupIds, sessionId: selectedSessionId)
         }
         dismiss()
     }

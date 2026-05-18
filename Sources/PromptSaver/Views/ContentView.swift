@@ -66,8 +66,10 @@ struct ContentView: View {
         switch selection {
         case .all:
             return { _ in true }
-        case .tag(let tag):
-            return { $0.tagIds.contains(tag.id) }
+        case .group(let group):
+            return { $0.groupIds.contains(group.id) }
+        case .session(let session):
+            return { $0.sessionId == session.id }
         }
     }
 
@@ -80,5 +82,6 @@ struct ContentView: View {
 
 enum SidebarSelection: Hashable {
     case all
-    case tag(Tag)
+    case session(Session)
+    case group(Group)
 }
