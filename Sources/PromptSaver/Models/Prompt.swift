@@ -7,15 +7,13 @@ struct Prompt: Codable, Identifiable, Hashable {
     var createdAt: Date
     var updatedAt: Date
     var groupIds: Set<UUID>
-    var sessionId: UUID?
 
-    init(id: UUID = UUID(), title: String, content: String, groupIds: Set<UUID> = [], sessionId: UUID? = nil) {
+    init(id: UUID = UUID(), title: String, content: String, groupIds: Set<UUID> = []) {
         self.id = id
         self.title = title
         self.content = content
         self.createdAt = Date()
         self.updatedAt = Date()
         self.groupIds = groupIds
-        self.sessionId = sessionId
     }
 }

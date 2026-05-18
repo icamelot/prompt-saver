@@ -14,24 +14,10 @@ struct LocalizedStrings {
         }
     }
 
-    var sessions: String {
-        switch language {
-        case .english: return "Sessions"
-        case .chinese: return "会话"
-        }
-    }
-
     var groups: String {
         switch language {
         case .english: return "Groups"
         case .chinese: return "分组"
-        }
-    }
-
-    var newSession: String {
-        switch language {
-        case .english: return "New Session"
-        case .chinese: return "新建会话"
         }
     }
 
@@ -53,13 +39,6 @@ struct LocalizedStrings {
         switch language {
         case .english: return "Duplicate Group"
         case .chinese: return "复制分组"
-        }
-    }
-
-    var deleteSession: String {
-        switch language {
-        case .english: return "Delete Session"
-        case .chinese: return "删除会话"
         }
     }
 

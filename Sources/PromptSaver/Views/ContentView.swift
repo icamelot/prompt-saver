@@ -68,8 +68,6 @@ struct ContentView: View {
             return { _ in true }
         case .group(let group):
             return { $0.groupIds.contains(group.id) }
-        case .session(let session):
-            return { $0.sessionId == session.id }
         }
     }
 
@@ -82,6 +80,5 @@ struct ContentView: View {
 
 enum SidebarSelection: Hashable {
     case all
-    case session(Session)
     case group(Group)
 }

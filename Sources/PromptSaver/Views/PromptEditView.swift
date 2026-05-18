@@ -10,7 +10,6 @@ struct PromptEditView: View {
     @State private var title: String
     @State private var content: String
     @State private var selectedGroupIds: Set<UUID>
-    @State private var selectedSessionId: UUID?
     @State private var newGroupNameInput: String = ""
 
     private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
@@ -35,7 +34,6 @@ struct PromptEditView: View {
         _title = State(initialValue: editingPrompt?.title ?? "")
         _content = State(initialValue: editingPrompt?.content ?? "")
         _selectedGroupIds = State(initialValue: editingPrompt?.groupIds ?? [])
-        _selectedSessionId = State(initialValue: editingPrompt?.sessionId)
     }
 
     var body: some View {
@@ -48,15 +46,6 @@ struct PromptEditView: View {
                     TextEditor(text: $content)
                         .font(.body)
                         .frame(minHeight: 250)
-                }
-
-                Section(s.sessions) {
-                    Picker(s.sessions, selection: $selectedSessionId) {
-                        Text("None").tag(nil as UUID?)
-                        ForEach(store.sessions) { session in
-                            Text(session.name).tag(session.id as UUID?)
-                        }
-                    }
                 }
 
                 Section(s.groupsSection) {
@@ -125,10 +114,10 @@ struct PromptEditView: View {
 
         if let prompt = editingPrompt {
             store.updatePrompt(prompt, title: trimmedTitle, content: trimmedContent,
-                               groupIds: selectedGroupIds, sessionId: selectedSessionId)
+                               groupIds: selectedGroupIds)
         } else {
             store.addPrompt(title: trimmedTitle, content: trimmedContent,
-                            groupIds: selectedGroupIds, sessionId: selectedSessionId)
+                            groupIds: selectedGroupIds)
         }
         dismiss()
     }
