@@ -7,6 +7,11 @@ struct PromptListView: View {
     let filter: (Prompt) -> Bool
     let searchText: String
 
+    @State private var renameTarget: Prompt?
+    @State private var renameInput = ""
+    @State private var showRenameAlert = false
+    @State private var showNewPromptSheet = false
+
     private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
     private var filteredPrompts: [Prompt] {
@@ -39,6 +44,19 @@ struct PromptListView: View {
                     PromptRowView(prompt: prompt, groups: store.groups(for: prompt))
                         .tag(prompt)
                         .contextMenu {
+                            Button(s.newPrompt) {
+                                showNewPromptSheet = true
+                            }
+                            Divider()
+                            Button(s.renamePrompt) {
+                                renameTarget = prompt
+                                renameInput = prompt.title
+                                showRenameAlert = true
+                            }
+                            Button(s.duplicatePrompt) {
+                                store.duplicatePrompt(prompt)
+                            }
+                            Divider()
                             Button(s.copyContent, systemImage: "doc.on.doc") {
                                 copyToClipboard(prompt.content)
                             }
@@ -59,6 +77,29 @@ struct PromptListView: View {
             }
         }
         .listStyle(.bordered(alternatesRowBackgrounds: true))
+        .contextMenu {
+            Button(s.newPrompt) {
+                showNewPromptSheet = true
+            }
+        }
+        .alert(s.renamePrompt, isPresented: $showRenameAlert) {
+            TextField(s.titlePlaceholder, text: $renameInput)
+            Button(s.cancel, role: .cancel) {}
+            Button(s.save) { renamePrompt() }
+        }
+        .sheet(isPresented: $showNewPromptSheet) {
+            PromptEditView(editingPrompt: nil)
+                .environmentObject(store)
+                .environmentObject(localeManager)
+        }
+    }
+
+    private func renamePrompt() {
+        let name = renameInput.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty, let target = renameTarget else { return }
+        store.renamePrompt(target, to: name)
+        renameTarget = nil
+        renameInput = ""
     }
 
     private func copyToClipboard(_ text: String) {

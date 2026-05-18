@@ -5,8 +5,10 @@ struct SidebarView: View {
     @EnvironmentObject private var localeManager: LocaleManager
     @Binding var selection: SidebarSelection
 
-    @State private var newNameInput = ""
+    @State private var inputName = ""
     @State private var showNewGroupAlert = false
+    @State private var renameTarget: Group?
+    @State private var showRenameAlert = false
 
     private var s: LocalizedStrings { LocalizedStrings(localeManager.language) }
 
@@ -21,6 +23,11 @@ struct SidebarView: View {
                         .badge(store.groupCount(for: group))
                         .tag(SidebarSelection.group(group))
                         .contextMenu {
+                            Button(s.renameGroup) {
+                                renameTarget = group
+                                inputName = group.name
+                                showRenameAlert = true
+                            }
                             Button(s.duplicateGroup) {
                                 store.duplicateGroup(group)
                             }
@@ -35,14 +42,19 @@ struct SidebarView: View {
         .listStyle(.sidebar)
         .contextMenu {
             Button(s.newGroup) {
-                newNameInput = ""
+                inputName = ""
                 showNewGroupAlert = true
             }
         }
         .alert(s.newGroup, isPresented: $showNewGroupAlert) {
-            TextField(s.newGroupName, text: $newNameInput)
+            TextField(s.newGroupName, text: $inputName)
             Button(s.cancel, role: .cancel) {}
             Button(s.add) { addGroup() }
+        }
+        .alert(s.renameGroup, isPresented: $showRenameAlert) {
+            TextField(s.newGroupName, text: $inputName)
+            Button(s.cancel, role: .cancel) {}
+            Button(s.save) { renameGroup() }
         }
     }
 
@@ -51,10 +63,18 @@ struct SidebarView: View {
     }
 
     private func addGroup() {
-        let name = newNameInput.trimmingCharacters(in: .whitespaces)
+        let name = inputName.trimmingCharacters(in: .whitespaces)
         guard !name.isEmpty else { return }
         _ = store.addGroup(name: name)
-        newNameInput = ""
+        inputName = ""
+    }
+
+    private func renameGroup() {
+        let name = inputName.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty, let target = renameTarget else { return }
+        store.renameGroup(target, to: name)
+        renameTarget = nil
+        inputName = ""
     }
 
     private func deleteGroup(_ group: Group) {

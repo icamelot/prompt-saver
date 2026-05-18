@@ -42,7 +42,35 @@ struct LocalizedStrings {
         }
     }
 
+    var renameGroup: String {
+        switch language {
+        case .english: return "Rename Group"
+        case .chinese: return "重命名分组"
+        }
+    }
+
     // MARK: - Content / List
+
+    var newPrompt: String {
+        switch language {
+        case .english: return "New Prompt"
+        case .chinese: return "新建提示词"
+        }
+    }
+
+    var renamePrompt: String {
+        switch language {
+        case .english: return "Rename"
+        case .chinese: return "重命名"
+        }
+    }
+
+    var duplicatePrompt: String {
+        switch language {
+        case .english: return "Duplicate"
+        case .chinese: return "复制"
+        }
+    }
 
     var noPromptSelected: String {
         switch language {
@@ -131,13 +159,6 @@ struct LocalizedStrings {
     }
 
     // MARK: - Edit Sheet
-
-    var newPrompt: String {
-        switch language {
-        case .english: return "New Prompt"
-        case .chinese: return "新建提示词"
-        }
-    }
 
     var editPrompt: String {
         switch language {

@@ -95,6 +95,29 @@ final class DataStore: ObservableObject {
         save()
     }
 
+    func duplicatePrompt(_ prompt: Prompt) {
+        let baseTitle = prompt.title
+        let existingTitles = Set(prompts.map(\.title))
+        var copyTitle = baseTitle
+        var counter = 1
+        while existingTitles.contains(copyTitle) {
+            copyTitle = "\(baseTitle) (\(counter))"
+            counter += 1
+        }
+        var copy = Prompt(title: copyTitle, content: prompt.content, groupIds: prompt.groupIds)
+        copy.createdAt = Date()
+        copy.updatedAt = Date()
+        prompts.append(copy)
+        save()
+    }
+
+    func renamePrompt(_ prompt: Prompt, to title: String) {
+        guard let index = prompts.firstIndex(where: { $0.id == prompt.id }) else { return }
+        prompts[index].title = title
+        prompts[index].updatedAt = Date()
+        save()
+    }
+
     // MARK: - Group operations
 
     func addGroup(name: String) -> Group {
@@ -117,6 +140,12 @@ final class DataStore: ObservableObject {
             counter += 1
         }
         _ = addGroup(name: copyName)
+    }
+
+    func renameGroup(_ group: Group, to name: String) {
+        guard let index = groups.firstIndex(where: { $0.id == group.id }) else { return }
+        groups[index].name = name
+        save()
     }
 
     func deleteGroup(_ group: Group) {
