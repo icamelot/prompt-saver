@@ -48,6 +48,12 @@ struct SidebarView: View {
             }
         }
         .listStyle(.sidebar)
+        .contextMenu {
+            Button(s.newTag) {
+                newTagNameInput = ""
+                isShowingNewTagAlert = true
+            }
+        }
         .alert(s.newTag, isPresented: $isShowingNewTagAlert) {
             TextField(s.newTagPrompt, text: $newTagNameInput)
             Button(s.cancel, role: .cancel) {}
